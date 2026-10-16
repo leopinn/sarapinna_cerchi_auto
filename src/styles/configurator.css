@@ -49,35 +49,16 @@
   background: var(--nero);
 }
 
-/* --- marchio (copia di Wordmark.astro, qui serve dentro React) ------------- */
-.cfg-wordmark {
+/* --- logo (monogramma, colore oro) -------------------------------------------- */
+.cfg-logo {
   display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--testo);
-  line-height: 1;
-  white-space: nowrap;
-}
-.cfg-wordmark__sp {
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 800;
-  font-size: 22px;
-  letter-spacing: -0.02em;
-}
-.cfg-wordmark__filo {
-  width: 1px;
-  height: 18px;
-  background: var(--oro);
-  transform: skewX(-18deg);
-}
-.cfg-wordmark__design {
-  font-family: var(--font-ui);
-  font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
+  line-height: 0;
   color: var(--oro);
+}
+.cfg-logo svg {
+  height: 38px;
+  width: auto;
+  max-width: none;
 }
 
 /* --- barra in alto ----------------------------------------------------------- */
@@ -832,12 +813,8 @@
     grid-template-columns: auto 1fr auto;
     padding: 0 var(--s-2) 0 var(--s-4);
   }
-  .cfg-wordmark__sp {
-    font-size: 18px;
-  }
-  .cfg-wordmark__design {
-    font-size: 9px;
-    letter-spacing: 0.32em;
+  .cfg-logo svg {
+    height: 32px;
   }
   .cfg-top__contatti {
     display: none;

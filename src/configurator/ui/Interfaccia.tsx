@@ -13,6 +13,7 @@ import { precaricaLegni } from '../materials/wood';
 import { PASSI, useConfiguratore } from '../state/store';
 import { codifica } from '../state/urlState';
 import { CONTENUTO_PASSO } from './Passi';
+import { LOGO_MONOGRAMMA } from '../../assets/logo/index';
 import { riduciMovimento, useLingua, useMobile } from './hooks';
 
 gsap.registerPlugin(Draggable);
@@ -22,13 +23,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
 /* ---------------------------------------------------------------------------- */
 
 function Marchio() {
-  return (
-    <span className="cfg-wordmark" aria-hidden="true">
-      <span className="cfg-wordmark__sp">SP</span>
-      <span className="cfg-wordmark__filo" />
-      <span className="cfg-wordmark__design">Design</span>
-    </span>
-  );
+  return <span className="cfg-logo" dangerouslySetInnerHTML={{ __html: LOGO_MONOGRAMMA }} />;
 }
 
 function BarraAlta({ rif }: { rif: React.RefObject<HTMLElement | null> }) {

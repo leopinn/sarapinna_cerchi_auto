@@ -168,7 +168,7 @@ export const VETRO = {
 };
 
 /** Logo inciso al laser: larghezza della scritta e margine dal bordo del vetro. */
-export const LOGO = { larghezza: 160, margine: 30 };
+export const LOGO = { larghezza: 120, margine: 30 };
 
 /** Quote verticali assolute (mm dal pavimento), calcolate dalle misure sopra. */
 export const quote = (rim: Cerchio) => {

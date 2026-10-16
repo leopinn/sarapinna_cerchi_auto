@@ -51,7 +51,7 @@ const IconaVetro = ({ id, logo }: { id: IdVetro; logo?: string }) => {
     const p = posizioneLogo(id, logo, PROPORZIONI_LOGO);
     const { larghezza } = ingombroVetro(id);
     const s = 44 / (larghezza / 1000);
-    segno = <rect x={24 + p.x * s - (p.larghezza * s) / 2} y={24 + p.z * s - 1.6} width={p.larghezza * s} height="3.2" rx="1" className="cfg-icona-vetro__logo" />;
+    segno = <rect x={24 + p.x * s - (p.larghezza * s) / 2} y={24 + p.z * s - (p.altezza * s) / 2} width={p.larghezza * s} height={p.altezza * s} rx="1" className="cfg-icona-vetro__logo" />;
   }
   return (
     <svg viewBox="0 0 48 48" className="cfg-icona-vetro">

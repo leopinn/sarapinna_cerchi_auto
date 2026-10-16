@@ -1,57 +1,38 @@
 ---
 /**
- * Marchio tipografico provvisorio "SP DESIGN".
- * TODO: sostituire con il logo SVG ufficiale quando arriva.
+ * Logo ufficiale.
+ *  - monogramma: dove lo spazio è poco (header)
+ *  - verticale:  monogramma + nome (footer, schermata di caricamento)
+ * Il monogramma è oro, la scritta del logo verticale chiara.
  */
+import { LOGO_MONOGRAMMA, LOGO_VERTICALE } from '../assets/logo/index';
+
 interface Props {
-  dimensione?: 'normale' | 'grande';
+  variante?: 'monogramma' | 'verticale';
+  /** altezza in px */
+  altezza?: number;
 }
-const { dimensione = 'normale' } = Astro.props;
+const { variante = 'monogramma', altezza = variante === 'monogramma' ? 40 : 96 } = Astro.props;
 ---
 
-<span class:list={['wordmark', `wordmark--${dimensione}`]} aria-hidden="true">
-  <span class="wordmark__sp">SP</span>
-  <span class="wordmark__filo"></span>
-  <span class="wordmark__design">Design</span>
-</span>
+<span class:list={['marchio', `marchio--${variante}`]} style={`--marchio-h: ${altezza}px`} set:html={variante === 'monogramma' ? LOGO_MONOGRAMMA : LOGO_VERTICALE} />
 
 <style>
-  .wordmark {
+  .marchio {
     display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    line-height: 0;
     color: var(--testo);
-    line-height: 1;
-    white-space: nowrap;
   }
-  .wordmark__sp {
-    font-family: var(--font-display);
-    font-stretch: 125%;
-    font-weight: 800;
-    font-size: 22px;
-    letter-spacing: -0.02em;
+  .marchio :global(svg) {
+    height: var(--marchio-h);
+    width: auto;
+    max-width: none;
   }
-  .wordmark__filo {
-    width: 1px;
-    height: 18px;
-    background: var(--oro);
-    transform: skewX(-18deg);
-  }
-  .wordmark__design {
-    font-family: var(--font-ui);
-    font-weight: 500;
-    font-size: 11px;
-    letter-spacing: 0.42em;
-    text-transform: uppercase;
+  .marchio--monogramma {
     color: var(--oro);
   }
-  .wordmark--grande .wordmark__sp {
-    font-size: 34px;
-  }
-  .wordmark--grande .wordmark__filo {
-    height: 26px;
-  }
-  .wordmark--grande .wordmark__design {
-    font-size: 13px;
+  /* logo verticale: monogramma oro, nome chiaro */
+  .marchio--verticale :global(g:first-of-type) {
+    fill: var(--oro);
   }
 </style>
