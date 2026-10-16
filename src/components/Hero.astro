@@ -1,0 +1,209 @@
+---
+import { existsSync } from 'node:fs';
+import { linguaDa, testi } from '../i18n/index';
+
+const lingua = linguaDa(Astro.url.pathname);
+const t = testi[lingua];
+
+// Il video della home viene renderizzato dalla scena 3D (vedi docs/VIDEO.md).
+// Le sorgenti si inseriscono solo se i file esistono: finché il video non c'è
+// l'hero mostra il poster o, in sua assenza, il fondo a gradienti.
+const esiste = (f: string) => existsSync(`public${f}`);
+const media = {
+  poster: '/media/sp-hero-poster.jpg',
+  posterWebp: '/media/sp-hero-poster.webp',
+  posterMobile: '/media/sp-hero-poster-mobile.jpg',
+  posterMobileWebp: '/media/sp-hero-poster-mobile.webp',
+  mobileWebm: '/media/sp-hero-720x1280.webm',
+  mobileMp4: '/media/sp-hero-720x1280.mp4',
+  desktopWebm: '/media/sp-hero-1080.webm',
+  desktopMp4: '/media/sp-hero-1080.mp4',
+};
+const c = Object.fromEntries(Object.entries(media).map(([k, v]) => [k, esiste(v)])) as Record<keyof typeof media, boolean>;
+const haVideo = c.desktopMp4 || c.desktopWebm;
+const mqMobile = '(max-width: 760px) and (orientation: portrait)';
+---
+
+<section class="hero" data-hero>
+  <div class="hero__fondo" aria-hidden="true"></div>
+
+  {c.poster && (
+    <picture class="hero__poster">
+      {c.posterMobileWebp && <source media={mqMobile} srcset={media.posterMobileWebp} type="image/webp" />}
+      {c.posterMobile && <source media={mqMobile} srcset={media.posterMobile} />}
+      {c.posterWebp && <source srcset={media.posterWebp} type="image/webp" />}
+      <img src={media.poster} alt="" fetchpriority="high" decoding="async" />
+    </picture>
+  )}
+
+  {haVideo && (
+    <video class="hero__video" muted loop playsinline autoplay preload="metadata" aria-hidden="true" data-hero-video>
+      {c.mobileWebm && <source media={mqMobile} src={media.mobileWebm} type="video/webm" />}
+      {c.mobileMp4 && <source media={mqMobile} src={media.mobileMp4} type="video/mp4" />}
+      {c.desktopWebm && <source src={media.desktopWebm} type="video/webm" />}
+      {c.desktopMp4 && <source src={media.desktopMp4} type="video/mp4" />}
+    </video>
+  )}
+
+  <div class="hero__velo" aria-hidden="true"></div>
+
+  <div class="hero__contenuto container">
+    <p class="occhiello" data-reveal-hero>{t.home.occhiello}</p>
+    <h1 data-hero-titolo>{t.home.titolo}</h1>
+    <p class="hero__testo" data-reveal-hero>{t.home.testo}</p>
+    <div class="hero__azioni" data-reveal-hero>
+      <a class="btn" href={t.nav.configuratore.href}>
+        {t.home.esplora}
+        <svg class="btn__freccia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+      </a>
+      <a class="btn btn--scuro" href={t.nav.contatti.href}>{t.home.contatti}</a>
+    </div>
+  </div>
+
+  {haVideo && (
+    <button
+      class="hero__pausa"
+      type="button"
+      aria-label={t.home.pausa}
+      aria-pressed="false"
+      data-label-pausa={t.home.pausa}
+      data-label-riproduci={t.home.riproduci}
+      data-hero-pausa
+    >
+      <svg class="icona-pausa" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor" /></svg>
+      <svg class="icona-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor" /></svg>
+    </button>
+  )}
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--nero);
+  }
+  /* fondo a gradienti stratificati: c'è sempre, sotto poster e video */
+  .hero__fondo {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    background:
+      radial-gradient(60% 50% at 72% 42%, rgba(var(--oro-rgb), 0.14), transparent 70%),
+      radial-gradient(40% 35% at 70% 46%, rgba(255, 255, 255, 0.06), transparent 70%),
+      radial-gradient(90% 70% at 10% 100%, rgba(38, 40, 45, 0.9), transparent 70%),
+      linear-gradient(180deg, var(--ant-900) 0%, var(--nero) 100%);
+  }
+  .hero__poster,
+  .hero__video {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+  }
+  .hero__poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__video {
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.2s var(--ease-out);
+  }
+  .hero__video.is-in-riproduzione {
+    opacity: 1;
+  }
+  /* velo: leggibilità del testo in basso a sinistra */
+  .hero__velo {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgba(10, 10, 11, 0.55) 0%, rgba(10, 10, 11, 0) 22%),
+      linear-gradient(0deg, rgba(10, 10, 11, 0.92) 0%, rgba(10, 10, 11, 0.35) 38%, rgba(10, 10, 11, 0) 62%),
+      linear-gradient(90deg, rgba(10, 10, 11, 0.6) 0%, rgba(10, 10, 11, 0) 55%);
+  }
+  .hero__contenuto {
+    width: 100%;
+    padding-top: calc(var(--nav-h) + var(--s-8));
+    padding-bottom: var(--s-9);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-5);
+  }
+  .hero h1 {
+    max-width: 13em;
+    font-size: clamp(36px, 5.6vw, 84px);
+  }
+  .hero__testo {
+    max-width: 34em;
+    font-size: 17px;
+    color: var(--testo-2);
+  }
+  .hero__azioni {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+    margin-top: var(--s-3);
+  }
+
+  .hero__pausa {
+    position: absolute;
+    right: var(--gutter);
+    bottom: var(--s-6);
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(20, 21, 24, 0.6);
+    box-shadow: inset 0 0 0 1px var(--filo-forte);
+    color: var(--testo);
+    cursor: pointer;
+    transition: transform var(--dur-2) var(--ease-spring);
+  }
+  .hero__pausa svg {
+    width: 16px;
+    height: 16px;
+  }
+  .hero__pausa:hover {
+    transform: scale(1.06);
+  }
+  .hero__pausa:active {
+    transform: scale(0.94);
+  }
+  .hero__pausa .icona-play,
+  .hero__pausa[aria-pressed='true'] .icona-pausa {
+    display: none;
+  }
+  .hero__pausa[aria-pressed='true'] .icona-play {
+    display: block;
+  }
+
+  @media (max-width: 760px) {
+    .hero__contenuto {
+      padding-bottom: var(--s-8);
+    }
+    .hero__testo {
+      font-size: 15px;
+    }
+    .hero__azioni {
+      width: 100%;
+    }
+    .hero__azioni .btn {
+      flex: 1 1 auto;
+    }
+    .hero__pausa {
+      top: calc(var(--nav-h) + var(--s-3));
+      bottom: auto;
+    }
+  }
+</style>

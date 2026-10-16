@@ -1,0 +1,22 @@
+---
+/**
+ * Rotta SOLO di sviluppo (integrations/dev-tools.mjs): confronto tra il
+ * modello 3D del cerchio e la foto dall'alto. Non esiste nel build.
+ */
+import '@fontsource-variable/archivo/wdth.css';
+import Calibration from '../configurator/dev/Calibration';
+---
+
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>SP Design — calibrazione cerchio</title>
+    <style>
+      html, body { margin: 0; background: #0a0a0b; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <Calibration client:only="react" />
+  </body>
+</html>

@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import { linguaDa, testi } from '../../i18n/index';
+
+const p = testi[linguaDa(Astro.url.pathname)].pagine.home;
+---
+
+<Base titolo={p.titolo} descrizione={p.descrizione} navTrasparente={true}>
+  <Hero />
+</Base>

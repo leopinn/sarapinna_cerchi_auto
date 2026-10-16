@@ -1,0 +1,21 @@
+# dipendenze
+node_modules/
+
+# build
+dist/
+.astro/
+
+# variabili d'ambiente — MAI committare
+.env
+.env.production
+.env.local
+
+# sistema
+.DS_Store
+*.log
+
+# credenziali SMTP per l'endpoint PHP — MAI committare
+smtp-config.php
+
+# asset solo di sviluppo (HDRI per il video della home)
+dev-assets/hdri/

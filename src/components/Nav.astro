@@ -1,0 +1,290 @@
+---
+import Wordmark from './Wordmark.astro';
+import { gemella, linguaDa, normalizza, testi } from '../i18n/index';
+
+interface Props {
+  trasparente?: boolean;
+}
+const { trasparente = false } = Astro.props;
+
+const path = normalizza(Astro.url.pathname);
+const lingua = linguaDa(path);
+const t = testi[lingua];
+const altraPagina = gemella(path);
+const voci = [t.nav.home, t.nav.configuratore, t.nav.contatti];
+const attiva = (href: string) => path === normalizza(href);
+---
+
+<header class:list={['nav', { 'nav--sopra': trasparente }]} data-nav data-trasparente={trasparente ? 'true' : 'false'}>
+  <div class="nav__inner container">
+    <a class="nav__marchio" href={t.nav.home.href} aria-label="SP Design — Home"><Wordmark /></a>
+
+    <nav class="nav__links" aria-label={t.menu.principale}>
+      {voci.slice(1).map((v) => (
+        <a href={v.href} class:list={['nav__link', { 'is-attiva': attiva(v.href) }]} aria-current={attiva(v.href) ? 'page' : undefined}>
+          {v.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="nav__azioni">
+      <a class="nav__lingua" href={altraPagina} hreflang={t.altraLingua.sigla.toLowerCase()} aria-label={t.altraLingua.etichetta} data-lang-switch>
+        {t.altraLingua.sigla}
+      </a>
+      <button
+        class="nav__burger"
+        type="button"
+        aria-expanded="false"
+        aria-controls="menu-mobile"
+        aria-label={t.menu.apri}
+        data-label-apri={t.menu.apri}
+        data-label-chiudi={t.menu.chiudi}
+        data-burger
+      >
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- menu mobile a tutto schermo -->
+<div class="menu" id="menu-mobile" data-menu hidden>
+  <nav class="menu__voci container" aria-label={t.menu.principale}>
+    {voci.map((v, i) => (
+      <a href={v.href} class:list={['menu__voce', { 'is-attiva': attiva(v.href) }]} aria-current={attiva(v.href) ? 'page' : undefined} data-menu-voce>
+        <span class="menu__num">0{i + 1}</span>
+        {v.label}
+      </a>
+    ))}
+  </nav>
+  <div class="menu__piede container" data-menu-voce>
+    <a class="nav__lingua" href={altraPagina} aria-label={t.altraLingua.etichetta} data-lang-switch>{t.altraLingua.sigla}</a>
+  </div>
+</div>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    height: var(--nav-h);
+  }
+  /* fondo: uno strato separato che compare solo con opacity */
+  .nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(10, 10, 11, 0.82);
+    box-shadow: inset 0 -1px 0 var(--filo);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    transition: opacity var(--dur-2) var(--ease-out);
+  }
+  .nav--sopra:not(.is-scorsa)::before {
+    opacity: 0;
+  }
+  .nav__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-5);
+  }
+  .nav__marchio {
+    display: inline-flex;
+    padding: var(--s-2) 0;
+    color: var(--testo);
+    transition: transform var(--dur-2) var(--ease-spring);
+  }
+  .nav__marchio:hover {
+    text-decoration: none;
+  }
+  .nav__marchio:active {
+    transform: scale(0.97);
+  }
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-left: auto;
+  }
+  .nav__link {
+    position: relative;
+    padding: var(--s-2) var(--s-4);
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--testo);
+    transition: opacity var(--dur-1) ease;
+  }
+  /* la barra oro cresce da sinistra: il colore del testo non cambia */
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: var(--s-4);
+    right: var(--s-4);
+    bottom: 2px;
+    height: 1px;
+    background: var(--oro);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .nav__link:hover {
+    text-decoration: none;
+  }
+  .nav__link:hover::after,
+  .nav__link:focus-visible::after,
+  .nav__link.is-attiva::after {
+    transform: scaleX(1);
+  }
+  .nav__link:active {
+    opacity: 0.7;
+  }
+
+  .nav__azioni {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+  }
+  .nav__lingua {
+    display: inline-grid;
+    place-items: center;
+    min-width: 44px;
+    height: 44px;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--testo-2);
+    transition: transform var(--dur-2) var(--ease-spring), opacity var(--dur-1) ease;
+  }
+  .nav__lingua:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+    color: var(--oro-chiaro);
+  }
+  .nav__lingua:active {
+    transform: scale(0.94);
+  }
+
+  .nav__burger {
+    display: none;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav__burger span {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 1.5px;
+    background: var(--testo);
+    transition: transform var(--dur-2) var(--ease-spring);
+  }
+  .nav__burger span:first-child {
+    transform: translateY(-4px);
+  }
+  .nav__burger span:last-child {
+    transform: translateY(4px);
+    right: 18px;
+  }
+  .nav__burger[aria-expanded='true'] span:first-child {
+    transform: rotate(45deg);
+  }
+  .nav__burger[aria-expanded='true'] span:last-child {
+    transform: rotate(-45deg);
+    right: 10px;
+  }
+  .nav__burger:active {
+    transform: scale(0.94);
+  }
+
+  /* menu mobile */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--s-7);
+    padding-top: var(--nav-h);
+    background:
+      radial-gradient(120% 60% at 100% 0%, rgba(var(--oro-rgb), 0.1), transparent 60%),
+      radial-gradient(80% 50% at 0% 100%, rgba(var(--oro-rgb), 0.06), transparent 60%),
+      var(--nero);
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu__voci {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    width: 100%;
+  }
+  .menu__voce {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+    padding: var(--s-3) 0;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-size: clamp(28px, 9vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--testo);
+    box-shadow: inset 0 -1px 0 var(--filo);
+    transition: transform var(--dur-2) var(--ease-spring);
+  }
+  .menu__voce:hover {
+    text-decoration: none;
+    transform: translateX(6px);
+  }
+  .menu__voce:active {
+    transform: translateX(2px) scale(0.99);
+  }
+  .menu__voce.is-attiva {
+    color: var(--oro-chiaro);
+  }
+  .menu__num {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--oro);
+  }
+  .menu__piede {
+    width: 100%;
+  }
+
+  @media (max-width: 760px) {
+    .nav__links {
+      display: none;
+    }
+    .nav__burger {
+      display: block;
+    }
+    .nav__azioni > .nav__lingua {
+      display: none;
+    }
+  }
+  @media (min-width: 761px) {
+    .menu {
+      display: none !important;
+    }
+  }
+</style>

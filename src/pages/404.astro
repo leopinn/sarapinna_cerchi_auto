@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { testi } from '../i18n/index';
+
+// la 404 è una sola per tutto il sito: mostra entrambe le lingue
+const it = testi.it.pagine.nonTrovata;
+const en = testi.en.pagine.nonTrovata;
+---
+
+<Base titolo={it.titolo} descrizione={it.descrizione} noindex={true}>
+  <section class="nf">
+    <div class="nf__fondo" aria-hidden="true"></div>
+    <div class="container nf__contenuto">
+      <p class="occhiello" data-reveal-hero>{it.occhiello}</p>
+      <h1 data-reveal-hero>{it.h1}</h1>
+      <p class="nf__testo" data-reveal-hero>{it.testo}</p>
+      <p class="nf__testo nf__testo--en" lang="en" data-reveal-hero>{en.h1} — {en.testo}</p>
+      <div class="nf__azioni" data-reveal-hero>
+        <a class="btn" href="/">{it.cta}</a>
+        <a class="btn btn--scuro" href="/en" lang="en">{en.cta}</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  .nf__fondo {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(40% 40% at 70% 40%, rgba(var(--oro-rgb), 0.1), transparent 70%),
+      linear-gradient(180deg, var(--ant-900), var(--nero));
+  }
+  .nf__contenuto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-5);
+    padding-top: var(--nav-h);
+  }
+  .nf__testo {
+    max-width: 34em;
+    color: var(--testo-2);
+  }
+  .nf__testo--en {
+    color: var(--testo-3);
+    font-size: 14px;
+  }
+  .nf__azioni {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+  }
+</style>

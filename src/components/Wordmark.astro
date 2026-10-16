@@ -1,0 +1,57 @@
+---
+/**
+ * Marchio tipografico provvisorio "SP DESIGN".
+ * TODO: sostituire con il logo SVG ufficiale quando arriva.
+ */
+interface Props {
+  dimensione?: 'normale' | 'grande';
+}
+const { dimensione = 'normale' } = Astro.props;
+---
+
+<span class:list={['wordmark', `wordmark--${dimensione}`]} aria-hidden="true">
+  <span class="wordmark__sp">SP</span>
+  <span class="wordmark__filo"></span>
+  <span class="wordmark__design">Design</span>
+</span>
+
+<style>
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--testo);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .wordmark__sp {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  .wordmark__filo {
+    width: 1px;
+    height: 18px;
+    background: var(--oro);
+    transform: skewX(-18deg);
+  }
+  .wordmark__design {
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--oro);
+  }
+  .wordmark--grande .wordmark__sp {
+    font-size: 34px;
+  }
+  .wordmark--grande .wordmark__filo {
+    height: 26px;
+  }
+  .wordmark--grande .wordmark__design {
+    font-size: 13px;
+  }
+</style>

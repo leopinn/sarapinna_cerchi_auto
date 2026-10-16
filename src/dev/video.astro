@@ -1,0 +1,22 @@
+---
+/**
+ * Rotta SOLO di sviluppo (integrations/dev-tools.mjs): la scena 3D da cui si
+ * registra il video della home. Non esiste nel build. Vedi docs/VIDEO.md.
+ */
+import '@fontsource-variable/archivo/wdth.css';
+import VideoStage from '../configurator/dev/VideoStage';
+---
+
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>SP Design — scena video</title>
+    <style>
+      html, body { margin: 0; background: #000; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <VideoStage client:only="react" />
+  </body>
+</html>

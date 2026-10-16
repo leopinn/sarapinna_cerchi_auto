@@ -1,0 +1,4 @@
+# Le librerie non vanno servite direttamente.
+<Files ~ "\.php$">
+  Require all denied
+</Files>

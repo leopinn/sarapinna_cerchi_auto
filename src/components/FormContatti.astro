@@ -1,0 +1,264 @@
+---
+import { linguaDa, percorso, testi } from '../i18n/index';
+
+const lingua = linguaDa(Astro.url.pathname);
+const t = testi[lingua].form;
+const linkConfiguratore = percorso('configuratore', lingua);
+---
+
+<form
+  class="form"
+  id="form-contatti"
+  data-reveal
+  data-lingua={lingua}
+  data-invio={t.invio}
+  data-invia={t.invia}
+  data-inviato={t.inviato}
+  data-grazie={t.grazie}
+  data-errore={t.erroreGenerico}
+  data-messaggio-preventivo={t.messaggioPreventivo}
+  data-configuratore={linkConfiguratore}
+>
+  <h2 class="form__titolo">{t.titolo}</h2>
+  <p class="form__sub">{t.sottotitolo}</p>
+
+  <!-- compare solo se si arriva dal configuratore con ?c= valido -->
+  <section class="config" data-config hidden aria-labelledby="config-titolo">
+    <div class="config__testata">
+      <p class="occhiello" id="config-titolo">{t.configurazione}</p>
+      <a class="config__modifica" data-config-modifica href={linkConfiguratore}>{t.modificaConfigurazione}</a>
+    </div>
+    <dl class="config__righe" data-config-righe></dl>
+    <p class="config__codice"><span>{t.codice}</span> <code data-config-codice></code></p>
+  </section>
+
+  <div class="form__riga">
+    <label class="field">
+      <span>{t.nome} <span class="req">*</span></span>
+      <input name="nome" type="text" required autocomplete="given-name" />
+      <span class="field__linea" aria-hidden="true"></span>
+    </label>
+    <label class="field">
+      <span>{t.cognome} <span class="req">*</span></span>
+      <input name="cognome" type="text" required autocomplete="family-name" />
+      <span class="field__linea" aria-hidden="true"></span>
+    </label>
+  </div>
+
+  <label class="field">
+    <span>{t.email} <span class="req">*</span></span>
+    <input name="email" type="email" placeholder={t.emailSegnaposto} required autocomplete="email" />
+    <span class="field__linea" aria-hidden="true"></span>
+  </label>
+
+  <label class="field">
+    <span>{t.messaggio} <span class="req">*</span></span>
+    <textarea name="messaggio" rows="5" placeholder={t.messaggioSegnaposto} required></textarea>
+    <span class="field__linea" aria-hidden="true"></span>
+  </label>
+
+  <input type="hidden" name="configurazione" value="" />
+
+  <div class="form__esca" aria-hidden="true">
+    <label>
+      {t.esca}
+      <input name="sito" type="text" tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <div class="form__piede">
+    <button class="btn" type="submit">{t.invia}</button>
+    <span class="form__stato" role="status" aria-live="polite"></span>
+  </div>
+</form>
+
+<style>
+  /* livello "elevato": pannello antracite sopra il fondo nero */
+  .form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-5);
+    min-width: 0;
+    padding: var(--s-7);
+    background: var(--ant-900);
+    box-shadow: inset 0 0 0 1px var(--filo), var(--ombra-flottante);
+    scroll-margin-top: calc(var(--nav-h) + var(--s-5));
+  }
+  .form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--s-7);
+    width: 64px;
+    height: 2px;
+    background: var(--oro);
+  }
+  .form__titolo {
+    font-size: clamp(22px, 2.2vw, 30px);
+  }
+  .form__sub {
+    margin-top: calc(var(--s-3) * -1);
+    font-size: 14px;
+    color: var(--testo-2);
+  }
+  .form__riga {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: var(--s-5);
+  }
+  .form__piede {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4);
+    padding-top: var(--s-5);
+    box-shadow: inset 0 1px 0 var(--filo);
+  }
+  .form__stato {
+    font-size: 14px;
+    color: var(--testo-2);
+  }
+  .form__esca {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* card della configurazione: livello "flottante" dentro il pannello */
+  .config {
+    padding: var(--s-5);
+    background: var(--ant-800);
+    box-shadow: inset 0 0 0 1px var(--filo-oro), var(--ombra-elevata);
+  }
+  .config[hidden] {
+    display: none;
+  }
+  .config__testata {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    flex-wrap: wrap;
+  }
+  .config__modifica {
+    font-size: 13px;
+    color: var(--oro-chiaro);
+  }
+  .config__righe {
+    margin: var(--s-4) 0 0;
+  }
+  .config__righe :global(div) {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    gap: var(--s-3);
+    padding: var(--s-2) 0;
+    box-shadow: inset 0 -1px 0 var(--filo);
+    font-size: 14px;
+  }
+  .config__righe :global(dt) {
+    color: var(--testo-3);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+  .config__righe :global(dd) {
+    margin: 0;
+  }
+  .config__codice {
+    margin-top: var(--s-3);
+    font-size: 12px;
+    color: var(--testo-3);
+  }
+  .config__codice code {
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    color: var(--oro-chiaro);
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 760px) {
+    .form {
+      padding: var(--s-6) var(--s-4);
+      margin: 0 calc(var(--gutter) * -1);
+    }
+    .form::before {
+      left: var(--s-4);
+    }
+    .config__righe :global(div) {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+</style>
+
+<script>
+  import { decodifica, codifica, PARAMETRO } from '../configurator/state/urlState';
+  import { righeRiepilogo } from '../configurator/state/summary';
+
+  const form = document.querySelector<HTMLFormElement>('#form-contatti');
+  if (form) {
+    const bottone = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const stato = form.querySelector<HTMLElement>('.form__stato')!;
+    // le etichette arrivano dal server già tradotte
+    const d = form.dataset;
+    const lingua = d.lingua === 'en' ? 'en' : 'it';
+
+    // arrivo dal configuratore: riepilogo + campo nascosto + messaggio precompilato
+    const parametro = new URLSearchParams(location.search).get(PARAMETRO);
+    const { config, valido } = decodifica(parametro);
+    if (parametro && valido) {
+      const codice = codifica(config);
+      const card = form.querySelector<HTMLElement>('[data-config]')!;
+      const righe = form.querySelector<HTMLElement>('[data-config-righe]')!;
+      for (const r of righeRiepilogo(config, lingua)) {
+        const div = document.createElement('div');
+        const dt = document.createElement('dt');
+        const dd = document.createElement('dd');
+        dt.textContent = r.etichetta;
+        dd.textContent = r.valore;
+        div.append(dt, dd);
+        righe.append(div);
+      }
+      form.querySelector<HTMLElement>('[data-config-codice]')!.textContent = codice;
+      form.querySelector<HTMLAnchorElement>('[data-config-modifica]')!.href = `${d.configuratore}?${PARAMETRO}=${codice}`;
+      form.querySelector<HTMLInputElement>('[name="configurazione"]')!.value = codice;
+      const messaggio = form.querySelector<HTMLTextAreaElement>('[name="messaggio"]')!;
+      if (!messaggio.value) messaggio.value = d.messaggioPreventivo ?? '';
+      card.hidden = false;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const dati: Record<string, string> = Object.fromEntries(
+        [...new FormData(form)].map(([k, v]) => [k, String(v)]),
+      );
+      dati.lingua = lingua;
+
+      bottone.disabled = true;
+      bottone.textContent = d.invio ?? '…';
+      stato.textContent = '';
+
+      try {
+        const r = await fetch('/api/contatti.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dati),
+        });
+        const esito: { errore?: string } = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(esito.errore || 'invio non riuscito');
+
+        bottone.textContent = d.inviato ?? '';
+        stato.textContent = d.grazie ?? '';
+        form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input:not([type=hidden]), textarea').forEach((c) => (c.value = ''));
+      } catch (err) {
+        bottone.disabled = false;
+        bottone.textContent = d.invia ?? '';
+        stato.textContent = (err instanceof Error && err.message !== 'invio non riuscito' && err.message) || d.errore || '';
+        console.error(err);
+      }
+    });
+  }
+</script>

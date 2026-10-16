@@ -1,0 +1,70 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/inter/wght.css';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { linguaDa, normalizza, pagine, testi } from '../i18n/index';
+
+interface Props {
+  titolo: string;
+  descrizione: string;
+  /** nav trasparente sopra l'hero a tutto schermo */
+  navTrasparente?: boolean;
+  /** pagina a tutto schermo senza nav e footer globali (configuratore) */
+  immersivo?: boolean;
+  noindex?: boolean;
+}
+
+const { titolo, descrizione, navTrasparente = false, immersivo = false, noindex = false } = Astro.props;
+
+const path = normalizza(Astro.url.pathname);
+const lingua = linguaDa(path);
+const t = testi[lingua];
+
+// hreflang: dice a Google che le due versioni sono la stessa pagina in lingue
+// diverse, così non le tratta come contenuto duplicato.
+const origine = Astro.site?.origin ?? '';
+const coppia = pagine.find((c) => c.it === path || c.en === path);
+const urlIt = origine + (coppia?.it ?? '/');
+const urlEn = origine + (coppia?.en ?? '/en');
+const canonico = origine + path;
+---
+
+<!doctype html>
+<html lang={lingua}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{titolo}</title>
+    <meta name="description" content={descrizione} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonico} />}
+    <meta name="theme-color" content="#0a0a0b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SP Design" />
+    <meta property="og:title" content={titolo} />
+    <meta property="og:description" content={descrizione} />
+    <meta property="og:url" content={canonico} />
+    <meta property="og:locale" content={lingua === 'it' ? 'it_IT' : 'en_GB'} />
+    <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/images/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    {coppia && <link rel="alternate" hreflang="it" href={urlIt} />}
+    {coppia && <link rel="alternate" hreflang="en" href={urlEn} />}
+    {coppia && <link rel="alternate" hreflang="x-default" href={urlIt} />}
+    <slot name="head" />
+  </head>
+  <body class:list={{ 'is-immersivo': immersivo }}>
+    <a class="salta" href="#contenuto">{t.vaiAlContenuto}</a>
+    {!immersivo && <Nav trasparente={navTrasparente} />}
+    <main id="contenuto">
+      <slot />
+    </main>
+    {!immersivo && <Footer />}
+    <script>
+      import '../scripts/sito';
+    </script>
+  </body>
+</html>

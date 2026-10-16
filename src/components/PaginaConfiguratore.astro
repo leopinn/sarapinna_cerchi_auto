@@ -1,0 +1,36 @@
+---
+/**
+ * Pagina del configuratore, uguale per le due lingue: la lingua arriva
+ * dall'indirizzo. Il 3D è un'isola React caricata solo qui (client:only:
+ * three.js non può girare sul server).
+ */
+import Base from '../layouts/Base.astro';
+import BootLoader from './BootLoader.astro';
+import Configurator from '../configurator/Configurator';
+import '../styles/configurator.css';
+import { gemella, linguaDa, percorso, testi } from '../i18n/index';
+
+const lingua = linguaDa(Astro.url.pathname);
+const t = testi[lingua];
+const p = t.pagine.configuratore;
+const link = {
+  home: percorso('home', lingua),
+  contatti: percorso('contatti', lingua),
+  altraLingua: gemella(Astro.url.pathname),
+  siglaAltraLingua: t.altraLingua.sigla,
+  etichettaAltraLingua: t.altraLingua.etichetta,
+};
+---
+
+<Base titolo={p.titolo} descrizione={p.descrizione} immersivo={true}>
+  <h1 class="sr-only">{t.configuratore.h1}</h1>
+  <p class="sr-only">{t.configuratore.intro}</p>
+  <noscript>
+    <div class="cfg-noscript">
+      <p>{t.configuratore.noscript}</p>
+      <a class="btn" href={link.contatti}>{t.nav.contatti.label}</a>
+    </div>
+  </noscript>
+  <BootLoader testo={t.configuratore.caricamento} />
+  <Configurator client:only="react" lingua={lingua} t={t.configuratore} link={link} />
+</Base>
