@@ -3,8 +3,9 @@ import react from '@astrojs/react';
 import devTools from './integrations/dev-tools.mjs';
 
 export default defineConfig({
-  // TODO: dominio definitivo di SP Design (serve per hreflang, canonical e sitemap)
-  site: 'https://www.spdesign.example',
+  // dominio provvisorio di Hostinger: da aggiornare quando c'è quello definitivo
+  // (serve per hreflang e canonical; va cambiato anche SITE_URL in smtp-config.php)
+  site: 'https://saddlebrown-leopard-790779.hostingersite.com',
   // Sito interamente statico: l'hosting condiviso Hostinger serve HTML e PHP,
   // non esegue Node. Il form passa da public/api/contatti.php, che finisce
   // nel build così com'è e invia via SMTP con PHPMailer. Il configuratore 3D
